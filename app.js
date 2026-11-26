@@ -196,6 +196,16 @@
     survey_start: '설문 시작',
   };
 
+  // 화면에는 "한글(영어)"로 보여 주고, 주소와 시트에는 영어 값을 그대로 쓴다.
+  const channelNames = {
+    visit: '매장 방문',
+    referral: '지인 소개',
+    community: '온라인 커뮤니티',
+    direct: '직접 접속',
+    test: '테스트',
+  };
+  const channelLabel = (source) => (channelNames[source] ? `${channelNames[source]}(${source})` : source);
+
   const percentOf = (part, whole) => (whole ? `${((part / whole) * 100).toFixed(1)}%` : '0.0%');
 
   // 첫 행은 제목, 나머지는 내용인 표. 칸이 많으면 표 안에서 좌우로 넘겨 본다.
@@ -233,7 +243,7 @@
 
     add(resultsPanel, 'h3', '채널별 전환율');
     addTable(resultsPanel, ['채널', '조회수', '응답자 수', '전환율'],
-      result.channels.map((c) => [c.source, c.views, c.responses, percentOf(c.responses, c.views)]));
+      result.channels.map((c) => [channelLabel(c.source), c.views, c.responses, percentOf(c.responses, c.views)]));
   }
 
   // 시트의 responses, events 탭 기록. 서버가 호칭, 연락처, sid 를 보내지 않는다.
@@ -242,12 +252,12 @@
     add(resultsPanel, 'h3', `응답 기록 (${result.responses.length}건)`);
     add(resultsPanel, 'p', '1~7은 설문 문항 번호입니다. 표를 좌우로 넘겨 보세요. 호칭과 연락처는 공개하지 않습니다.');
     addTable(resultsPanel, ['시각', '경로', '적격', ...keys.map((_, i) => String(i + 1))],
-      result.responses.map((r) => [r.time, r.source, r.eligible, ...keys.map((key) => r[key])]), 'records');
+      result.responses.map((r) => [r.time, channelLabel(r.source), r.eligible, ...keys.map((key) => r[key])]), 'records');
 
     const details = add(resultsPanel, 'details');
     add(details, 'summary', `방문·클릭 기록 (${result.events.length}건)`);
     addTable(details, ['시각', '경로', '동작'],
-      result.events.map((e) => [e.time, e.source, eventNames[e.event] || e.event]), 'records');
+      result.events.map((e) => [e.time, channelLabel(e.source), eventNames[e.event] || e.event]), 'records');
   }
 
   function renderResults(result) {

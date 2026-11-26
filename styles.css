@@ -131,6 +131,7 @@ dialog::backdrop { background: #000000b3; }
 .dialog-body table { width: 100%; border-collapse: collapse; }
 .dialog-body th, .dialog-body td { padding: 7px 8px; border: 1px solid #ffffff1f; text-align: right; }
 .dialog-body th:first-child, .dialog-body td:first-child { text-align: left; }
+.dialog-body td:not(:first-child) { white-space: nowrap; }
 .dialog-body thead th { background: var(--high); white-space: nowrap; }
 .dialog-body h3 { margin: 18px 0 8px; font-size: 15px; }
 .table-scroll { overflow-x: auto; }
