@@ -115,7 +115,14 @@ textarea, input[type="text"] {
 .privacy dd { margin: 0; }
 .privacy a { color: var(--primary); }
 
-footer { text-align: center; color: var(--muted); font-size: 12px; opacity: 0.7; padding-top: 24px; padding-bottom: 110px; }
+footer { padding-top: 24px; padding-bottom: 110px; }
+.results-toggle { display: block; width: 100%; color: var(--muted); font-size: 14px; }
+#results { margin-top: 12px; background: var(--low); border-radius: 14px; padding: 16px; font-size: 14px; }
+#results h3 { margin: 18px 0 6px; font-size: 14px; }
+#results p { margin: 0; color: var(--muted); }
+.result-row { display: flex; justify-content: space-between; gap: 12px; color: var(--muted); }
+.result-bar { height: 6px; margin: 2px 0 8px; background: var(--high); border-radius: 6px; overflow: hidden; }
+.result-bar i { display: block; height: 100%; background: var(--primary); }
 
 .sticky {
   position: fixed; left: 0; right: 0; bottom: 0; padding: 10px 20px calc(10px + env(safe-area-inset-bottom));

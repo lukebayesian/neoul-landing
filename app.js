@@ -176,6 +176,64 @@
     }
   });
 
+  // 설문 결과(테스트용): 서버는 선택형 답변의 합계만 보낸다. 문항과 보기 이름은 설문 화면에서 가져온다.
+  const resultsToggle = $('#results-toggle');
+  const resultsPanel = $('#results');
+
+  function add(parent, tag, text, className) {
+    const element = document.createElement(tag);
+    if (text) element.textContent = text;
+    if (className) element.className = className;
+    parent.appendChild(element);
+    return element;
+  }
+
+  function renderResults(result) {
+    resultsPanel.textContent = '';
+    add(resultsPanel, 'p', `전체 응답 ${result.total}건 · 적격 응답 ${result.eligible}건 (테스트 응답 포함)`);
+    if (!result.total) return;
+    Object.keys(result.counts).forEach((name) => {
+      const inputs = form.querySelectorAll(`input[name="${name}"]`);
+      if (!inputs.length) return;
+      add(resultsPanel, 'h3', inputs[0].closest('.q').querySelector('.q-title').textContent);
+      inputs.forEach((input) => {
+        const count = result.counts[name][input.value] || 0;
+        const percent = Math.round((count / result.total) * 100);
+        const row = add(resultsPanel, 'div', '', 'result-row');
+        add(row, 'span', input.closest('label').textContent.trim());
+        add(row, 'span', `${count}건 (${percent}%)`);
+        add(add(resultsPanel, 'div', '', 'result-bar'), 'i').style.width = `${percent}%`;
+      });
+    });
+  }
+
+  async function loadResults() {
+    if (!endpoint) {
+      resultsPanel.textContent = '미리보기 모드라 저장된 결과가 없습니다.';
+      return;
+    }
+    resultsPanel.textContent = '결과를 불러오는 중…';
+    const controller = new AbortController();
+    const timer = window.setTimeout(() => controller.abort(), 15000);
+    try {
+      const response = await window.fetch(endpoint, { signal: controller.signal });
+      const result = await response.json();
+      if (!result.ok) throw new Error('rejected');
+      renderResults(result);
+    } catch {
+      resultsPanel.textContent = '결과를 불러오지 못했습니다. 잠시 후 다시 눌러 주세요.';
+    } finally {
+      window.clearTimeout(timer);
+    }
+  }
+
+  resultsToggle.addEventListener('click', () => {
+    const open = resultsPanel.hidden;
+    resultsPanel.hidden = !open;
+    resultsToggle.setAttribute('aria-expanded', String(open));
+    if (open) loadResults();
+  });
+
   // 첫 CTA 가 화면에서 사라지면 하단 고정 버튼을 보여 준다.
   const heroCta = $('[data-cta="hero"]');
   new IntersectionObserver(([entry]) => {
