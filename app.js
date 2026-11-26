@@ -287,22 +287,63 @@
     if (result.responses) renderRecords(result);
   }
 
+  // Apps Script 는 실제 진행률을 알려 주지 않으므로, 퍼센트는 경과 시간으로 계산한 예상치다.
+  // 95% 를 넘지 않게 천천히 오르다가 결과를 받으면 100% 가 된다.
+  function showLoading() {
+    resultsPanel.textContent = '';
+    const box = add(resultsPanel, 'div', '', 'loading');
+    add(box, 'p', '결과를 불러오는 중입니다…');
+    const number = add(box, 'strong');
+    number.setAttribute('aria-hidden', 'true');
+    const bar = add(box, 'div', '', 'loading-bar');
+    bar.setAttribute('role', 'progressbar');
+    bar.setAttribute('aria-label', '설문 결과 불러오는 중');
+    const fill = add(bar, 'i');
+
+    const set = (value) => {
+      number.textContent = `${value}%`;
+      fill.style.width = `${value}%`;
+      bar.setAttribute('aria-valuenow', String(value));
+    };
+    const started = Date.now();
+    set(0);
+    const ticker = window.setInterval(() => {
+      set(Math.floor(95 * (1 - Math.exp(-(Date.now() - started) / 2500))));
+    }, 100);
+
+    return {
+      stop: () => window.clearInterval(ticker),
+      async finish() {
+        window.clearInterval(ticker);
+        set(100);
+        await new Promise((resolve) => window.setTimeout(resolve, 400));
+      },
+    };
+  }
+
+  // 닫았다가 다시 열면 마지막 요청의 결과만 화면에 쓴다.
+  let latestLoad = 0;
+
   async function loadResults() {
     if (!endpoint) {
       resultsPanel.textContent = '미리보기 모드라 저장된 결과가 없습니다.';
       return;
     }
-    resultsPanel.textContent = '결과를 불러오는 중…';
+    latestLoad += 1;
+    const load = latestLoad;
+    const loading = showLoading();
     const controller = new AbortController();
     const timer = window.setTimeout(() => controller.abort(), 15000);
     try {
       const response = await window.fetch(endpoint, { signal: controller.signal });
       const result = await response.json();
       if (!result.ok) throw new Error('rejected');
-      renderResults(result);
+      await loading.finish();
+      if (load === latestLoad) renderResults(result);
     } catch {
-      resultsPanel.textContent = '결과를 불러오지 못했습니다. 잠시 후 다시 눌러 주세요.';
+      if (load === latestLoad) resultsPanel.textContent = '결과를 불러오지 못했습니다. 잠시 후 다시 눌러 주세요.';
     } finally {
+      loading.stop();
       window.clearTimeout(timer);
     }
   }

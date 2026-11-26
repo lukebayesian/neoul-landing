@@ -135,6 +135,10 @@ dialog::backdrop { background: #000000b3; }
 .dialog-body thead th { background: var(--high); white-space: nowrap; }
 .dialog-body h3 { margin: 18px 0 8px; font-size: 15px; }
 .table-scroll { overflow-x: auto; }
+.loading { padding: 28px 4px; text-align: center; }
+.loading-bar { height: 8px; overflow: hidden; border-radius: 8px; background: var(--high); }
+.loading-bar i { display: block; width: 0; height: 100%; border-radius: 8px; background: var(--primary); transition: width 0.2s linear; }
+.loading strong { display: block; margin-bottom: 10px; color: var(--primary); font-size: 32px; font-variant-numeric: tabular-nums; }
 .dialog-body .records th, .dialog-body .records td { text-align: left; white-space: nowrap; font-size: 12px; }
 .dialog-body summary { cursor: pointer; min-height: 44px; display: flex; align-items: center; margin-top: 12px; font-weight: 600; }
 .dialog-body th.question { background: var(--raised); color: var(--primary); text-align: left; }
