@@ -192,17 +192,21 @@
     resultsPanel.textContent = '';
     add(resultsPanel, 'p', `전체 응답 ${result.total}건 · 적격 응답 ${result.eligible}건 (테스트 응답 포함)`);
     if (!result.total) return;
+    const table = add(resultsPanel, 'table');
+    const head = add(add(table, 'thead'), 'tr');
+    ['보기', '응답 수', '비율'].forEach((label) => { add(head, 'th', label).scope = 'col'; });
     Object.keys(result.counts).forEach((name) => {
       const inputs = form.querySelectorAll(`input[name="${name}"]`);
       if (!inputs.length) return;
-      add(resultsPanel, 'h3', inputs[0].closest('.q').querySelector('.q-title').textContent);
+      const group = add(table, 'tbody');
+      const title = inputs[0].closest('.q').querySelector('.q-title').textContent;
+      add(add(group, 'tr'), 'th', title, 'question').colSpan = 3;
       inputs.forEach((input) => {
         const count = result.counts[name][input.value] || 0;
-        const percent = Math.round((count / result.total) * 100);
-        const row = add(resultsPanel, 'div', '', 'result-row');
-        add(row, 'span', input.closest('label').textContent.trim());
-        add(row, 'span', `${count}건 (${percent}%)`);
-        add(add(resultsPanel, 'div', '', 'result-bar'), 'i').style.width = `${percent}%`;
+        const row = add(group, 'tr');
+        add(row, 'td', input.closest('label').textContent.trim());
+        add(row, 'td', `${count}건`);
+        add(row, 'td', `${Math.round((count / result.total) * 100)}%`);
       });
     });
   }
@@ -227,11 +231,15 @@
     }
   }
 
+  const resultsDialog = $('#results-dialog');
   resultsToggle.addEventListener('click', () => {
-    const open = resultsPanel.hidden;
-    resultsPanel.hidden = !open;
-    resultsToggle.setAttribute('aria-expanded', String(open));
-    if (open) loadResults();
+    resultsDialog.showModal();
+    loadResults();
+  });
+  $('#results-close').addEventListener('click', () => resultsDialog.close());
+  // 팝업 바깥(어두운 배경)을 누르면 닫는다.
+  resultsDialog.addEventListener('click', (event) => {
+    if (event.target === resultsDialog) resultsDialog.close();
   });
 
   // 첫 CTA 가 화면에서 사라지면 하단 고정 버튼을 보여 준다.
