@@ -188,10 +188,75 @@
     return element;
   }
 
+  const eventNames = {
+    view: '조회',
+    cta_hero: '버튼 클릭(상단)',
+    cta_bottom: '버튼 클릭(하단)',
+    cta_sticky: '버튼 클릭(고정)',
+    survey_start: '설문 시작',
+  };
+
+  const percentOf = (part, whole) => (whole ? `${((part / whole) * 100).toFixed(1)}%` : '0.0%');
+
+  // 첫 행은 제목, 나머지는 내용인 표. 칸이 많으면 표 안에서 좌우로 넘겨 본다.
+  function addTable(parent, headers, rows, className) {
+    const table = add(add(parent, 'div', '', 'table-scroll'), 'table', '', className);
+    const head = add(add(table, 'thead'), 'tr');
+    headers.forEach((label) => { add(head, 'th', label).scope = 'col'; });
+    const body = add(table, 'tbody');
+    rows.forEach((cells) => {
+      const row = add(body, 'tr');
+      cells.forEach((cell) => add(row, 'td', String(cell)));
+    });
+  }
+
+  // 전환율: 시트의 "전환율 현황" 탭과 같은 값(테스트 제외)과 테스트를 포함한 값을 나란히 보여 준다.
+  function renderFunnel(result) {
+    const { real, all } = result.funnel;
+    const counts = [
+      ['조회수 (방문 세션)', 'views'],
+      ['설문 버튼 클릭', 'clicks'],
+      ['설문 시작', 'starts'],
+      ['설문 응답자 수', 'responses'],
+      ['적격 응답자 수', 'eligible'],
+    ];
+    const rates = [
+      ['전환율 (응답자 ÷ 조회수)', 'responses', 'views'],
+      ['버튼 클릭률 (클릭 ÷ 조회수)', 'clicks', 'views'],
+      ['설문 완료율 (응답자 ÷ 시작)', 'responses', 'starts'],
+    ];
+    add(resultsPanel, 'h3', '전환율 현황');
+    addTable(resultsPanel, ['지표', '테스트 제외', '테스트 포함'], [
+      ...counts.map(([label, key]) => [label, real[key], all[key]]),
+      ...rates.map(([label, part, whole]) => [label, percentOf(real[part], real[whole]), percentOf(all[part], all[whole])]),
+    ]);
+
+    add(resultsPanel, 'h3', '채널별 전환율');
+    addTable(resultsPanel, ['채널', '조회수', '응답자 수', '전환율'],
+      result.channels.map((c) => [c.source, c.views, c.responses, percentOf(c.responses, c.views)]));
+  }
+
+  // 시트의 responses, events 탭 기록. 서버가 호칭, 연락처, sid 를 보내지 않는다.
+  function renderRecords(result) {
+    const keys = Object.keys(result.counts);
+    add(resultsPanel, 'h3', `응답 기록 (${result.responses.length}건)`);
+    add(resultsPanel, 'p', '1~7은 설문 문항 번호입니다. 표를 좌우로 넘겨 보세요. 호칭과 연락처는 공개하지 않습니다.');
+    addTable(resultsPanel, ['시각', '경로', '적격', ...keys.map((_, i) => String(i + 1))],
+      result.responses.map((r) => [r.time, r.source, r.eligible, ...keys.map((key) => r[key])]), 'records');
+
+    const details = add(resultsPanel, 'details');
+    add(details, 'summary', `방문·클릭 기록 (${result.events.length}건)`);
+    addTable(details, ['시각', '경로', '동작'],
+      result.events.map((e) => [e.time, e.source, eventNames[e.event] || e.event]), 'records');
+  }
+
   function renderResults(result) {
     resultsPanel.textContent = '';
     add(resultsPanel, 'p', `전체 응답 ${result.total}건 · 적격 응답 ${result.eligible}건 (테스트 응답 포함)`);
+    // 예전 버전의 Apps Script 는 합계만 보낸다.
+    if (result.funnel) renderFunnel(result);
     if (!result.total) return;
+    add(resultsPanel, 'h3', '문항별 합계');
     const table = add(resultsPanel, 'table');
     const head = add(add(table, 'thead'), 'tr');
     ['보기', '응답 수', '비율'].forEach((label) => { add(head, 'th', label).scope = 'col'; });
@@ -209,6 +274,7 @@
         add(row, 'td', `${Math.round((count / result.total) * 100)}%`);
       });
     });
+    if (result.responses) renderRecords(result);
   }
 
   async function loadResults() {

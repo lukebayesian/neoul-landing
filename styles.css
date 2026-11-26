@@ -132,6 +132,10 @@ dialog::backdrop { background: #000000b3; }
 .dialog-body th, .dialog-body td { padding: 7px 8px; border: 1px solid #ffffff1f; text-align: right; }
 .dialog-body th:first-child, .dialog-body td:first-child { text-align: left; }
 .dialog-body thead th { background: var(--high); white-space: nowrap; }
+.dialog-body h3 { margin: 18px 0 8px; font-size: 15px; }
+.table-scroll { overflow-x: auto; }
+.dialog-body .records th, .dialog-body .records td { text-align: left; white-space: nowrap; font-size: 12px; }
+.dialog-body summary { cursor: pointer; min-height: 44px; display: flex; align-items: center; margin-top: 12px; font-weight: 600; }
 .dialog-body th.question { background: var(--raised); color: var(--primary); text-align: left; }
 
 .sticky {
