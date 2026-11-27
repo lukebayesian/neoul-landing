@@ -9,7 +9,7 @@
   <meta property="og:title" content="마감할 때마다 재고와 현금, 다시 세고 계신가요?">
   <meta property="og:description" content="야간매장 점주·운영자를 위한 2분 설문">
   <link rel="icon" href="logo.svg" type="image/svg+xml">
-  <link rel="stylesheet" href="styles.css?v=7">
+  <link rel="stylesheet" href="styles.css?v=8">
 </head>
 <body>
   <header class="top">
@@ -192,19 +192,22 @@
     <button type="button" class="cta results-toggle" id="results-toggle" aria-haspopup="dialog">설문 조사 결과(테스트용도)</button>
   </footer>
 
-  <dialog id="results-dialog" aria-labelledby="results-title">
+  <!-- closedby="none": 배경 클릭이나 Esc 로 닫히지 않고 닫기 버튼으로만 닫는다. -->
+  <dialog id="results-dialog" aria-labelledby="results-title" closedby="none">
     <div class="dialog-head">
       <h2 id="results-title">설문 조사 결과(테스트용도)</h2>
-      <button type="button" class="link" id="results-close">닫기 ✕</button>
+      <button type="button" class="link" data-close>닫기 ✕</button>
     </div>
     <div class="dialog-body" id="results" aria-live="polite"></div>
+    <button type="button" class="dialog-float" data-close>✕ 닫기</button>
+    <button type="button" class="dialog-resize" id="results-resize" aria-label="팝업 크기 조절 (끌거나 방향키 사용)" title="끌어서 크기 조절"></button>
   </dialog>
 
   <div class="sticky" id="sticky">
     <button type="button" class="cta" data-cta="sticky">2분 설문 참여하기</button>
   </div>
 
-  <script src="config.js?v=7"></script>
-  <script src="app.js?v=7"></script>
+  <script src="config.js?v=8"></script>
+  <script src="app.js?v=8"></script>
 </body>
 </html>

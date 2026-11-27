@@ -250,14 +250,16 @@
   function renderRecords(result) {
     const keys = Object.keys(result.counts);
     add(resultsPanel, 'h3', `응답 기록 (${result.responses.length}건)`);
-    add(resultsPanel, 'p', '1~7은 설문 문항 번호입니다. 표를 좌우로 넘겨 보세요. 호칭과 연락처는 공개하지 않습니다.');
+    add(resultsPanel, 'p', '최신순입니다. 1~7은 설문 문항 번호이며, 표를 좌우로 넘겨 보세요. 호칭과 연락처는 공개하지 않습니다.');
+    // 시트에는 들어온 순서대로 행이 쌓이므로 뒤집으면 최신순이 된다.
+    const newestFirst = (list) => list.slice().reverse();
     addTable(resultsPanel, ['시각', '경로', '적격', ...keys.map((_, i) => String(i + 1))],
-      result.responses.map((r) => [r.time, channelLabel(r.source), r.eligible, ...keys.map((key) => r[key])]), 'records');
+      newestFirst(result.responses).map((r) => [r.time, channelLabel(r.source), r.eligible, ...keys.map((key) => r[key])]), 'records');
 
     const details = add(resultsPanel, 'details');
     add(details, 'summary', `방문·클릭 기록 (${result.events.length}건)`);
     addTable(details, ['시각', '경로', '동작'],
-      result.events.map((e) => [e.time, channelLabel(e.source), eventNames[e.event] || e.event]), 'records');
+      newestFirst(result.events).map((e) => [e.time, channelLabel(e.source), eventNames[e.event] || e.event]), 'records');
   }
 
   function renderResults(result) {
@@ -350,13 +352,55 @@
 
   const resultsDialog = $('#results-dialog');
   resultsToggle.addEventListener('click', () => {
+    // 지난번에 조절한 크기는 두고, 위치만 다시 가운데로 돌린다.
+    resultsDialog.style.left = '';
+    resultsDialog.style.top = '';
+    resultsDialog.style.margin = '';
     resultsDialog.showModal();
     loadResults();
   });
-  $('#results-close').addEventListener('click', () => resultsDialog.close());
-  // 팝업 바깥(어두운 배경)을 누르면 닫는다.
-  resultsDialog.addEventListener('click', (event) => {
-    if (event.target === resultsDialog) resultsDialog.close();
+  // 닫기 버튼으로만 닫는다. 배경 클릭은 아무 일도 하지 않고, Esc 도 막는다.
+  resultsDialog.querySelectorAll('[data-close]').forEach((button) => {
+    button.addEventListener('click', () => resultsDialog.close());
+  });
+  resultsDialog.addEventListener('cancel', (event) => event.preventDefault());
+
+  // 오른쪽 아래 손잡이로 크기를 바꾼다. 마우스와 터치 모두 pointer 이벤트로 처리한다.
+  const resizeHandle = $('#results-resize');
+
+  function resizeDialog(width, height) {
+    const box = resultsDialog.getBoundingClientRect();
+    // 왼쪽 위를 고정해야 손잡이가 손가락을 따라온다.
+    Object.assign(resultsDialog.style, { margin: '0', left: `${box.left}px`, top: `${box.top}px` });
+    const limit = (value, min, max) => Math.round(Math.min(Math.max(value, min), max));
+    const nextWidth = limit(width, 260, window.innerWidth - box.left - 8);
+    const nextHeight = limit(height, 240, window.innerHeight - box.top - 8);
+    resultsDialog.style.width = `${nextWidth}px`;
+    resultsDialog.style.height = `${nextHeight}px`;
+    resultsDialog.style.maxHeight = 'calc(100vh - 16px)';
+  }
+
+  resizeHandle.addEventListener('pointerdown', (event) => {
+    event.preventDefault();
+    const start = resultsDialog.getBoundingClientRect();
+    const move = (e) => resizeDialog(start.width + e.clientX - event.clientX, start.height + e.clientY - event.clientY);
+    const end = () => {
+      resizeHandle.removeEventListener('pointermove', move);
+      resizeHandle.removeEventListener('pointerup', end);
+      resizeHandle.removeEventListener('pointercancel', end);
+    };
+    resizeHandle.setPointerCapture(event.pointerId);
+    resizeHandle.addEventListener('pointermove', move);
+    resizeHandle.addEventListener('pointerup', end);
+    resizeHandle.addEventListener('pointercancel', end);
+  });
+
+  resizeHandle.addEventListener('keydown', (event) => {
+    const steps = { ArrowLeft: [-24, 0], ArrowRight: [24, 0], ArrowUp: [0, -24], ArrowDown: [0, 24] };
+    if (!steps[event.key]) return;
+    event.preventDefault();
+    const box = resultsDialog.getBoundingClientRect();
+    resizeDialog(box.width + steps[event.key][0], box.height + steps[event.key][1]);
   });
 
   // 첫 CTA 가 화면에서 사라지면 하단 고정 버튼을 보여 준다.
