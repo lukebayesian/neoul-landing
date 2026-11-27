@@ -1,0 +1,161 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>너울 | 지난 방문은 어떠셨나요</title>
+  <meta name="description" content="너울 혼술바 손님 설문. 이름과 연락처 없이 1분이면 됩니다.">
+  <meta name="robots" content="noindex">
+  <meta name="theme-color" content="#0c141c">
+  <link rel="icon" href="../logo.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="../styles.css?v=8">
+  <link rel="stylesheet" href="customer.css?v=3">
+</head>
+<body>
+  <header class="top">
+    <div class="brand">
+      <img src="../logo.svg" alt="너울 로고" width="48" height="48">
+      <span>너울 혼술바</span>
+    </div>
+    <span class="badge">익명 · 테스트 버전</span>
+  </header>
+
+  <main>
+    <section class="intro">
+      <h1 class="headline">이렇게 추운 날씨,<br><em>맛있는 술한잔</em><br>어떠세요?</h1>
+      <h2>지난번 너울은 어떠셨나요?</h2>
+      <p class="lead">너울에 오셨던 분께 여쭙니다. 가장 최근 방문을 떠올려 답해 주세요. 7문항, 약 1분이며 이름과 연락처는 받지 않습니다. 좋지 않았던 점도 그대로 알려주세요.</p>
+    </section>
+
+    <p class="step-label" id="step-label" aria-live="polite" tabindex="-1"></p>
+    <div class="progress" aria-hidden="true"><i id="progress-bar"></i></div>
+
+    <form id="survey-form" novalidate>
+      <fieldset class="step" data-name="방문 이야기">
+        <legend class="sr-only">방문 이야기</legend>
+        <div class="q" data-required="visits">
+          <p class="q-title">1. 최근 3개월 동안 너울에 몇 번 오셨나요?</p>
+          <div class="options">
+            <label><input type="radio" name="visits" value="처음">1회 이하</label>
+            <label><input type="radio" name="visits" value="2~3회">2~3회</label>
+            <label><input type="radio" name="visits" value="4~6회">4~6회</label>
+            <label><input type="radio" name="visits" value="7회 이상">7회 이상</label>
+          </div>
+        </div>
+
+        <div class="q" data-required="channel">
+          <p class="q-title">2. 너울을 처음 어떻게 알게 되셨나요?</p>
+          <div class="options">
+            <label><input type="radio" name="channel" value="지나가다">지나가다</label>
+            <label><input type="radio" name="channel" value="지인 소개">지인 소개</label>
+            <label><input type="radio" name="channel" value="SNS">SNS</label>
+            <label><input type="radio" name="channel" value="인터넷 검색">인터넷 검색</label>
+            <label><input type="radio" name="channel" value="기타">기타</label>
+          </div>
+        </div>
+
+        <div class="q" data-required="reason">
+          <p class="q-title">3. 가장 최근에 너울에 온 가장 큰 이유 하나는?</p>
+          <div class="options column">
+            <label><input type="radio" name="reason" value="바 분위기">바 분위기</label>
+            <label><input type="radio" name="reason" value="술·칵테일 맛">술·칵테일 맛</label>
+            <label><input type="radio" name="reason" value="직원·사장 응대">직원·사장의 응대</label>
+            <label><input type="radio" name="reason" value="손님끼리 교류">다른 손님과 친해지는 경험</label>
+            <label><input type="radio" name="reason" value="가격">가격</label>
+            <label><input type="radio" name="reason" value="위치">위치</label>
+          </div>
+        </div>
+
+      </fieldset>
+
+      <fieldset class="step" data-name="술과 분위기" hidden>
+        <legend class="sr-only">술과 분위기</legend>
+        <div class="q" data-required="cocktail">
+          <p class="q-title">4. 가장 최근에 드신 칵테일은 어땠나요?</p>
+          <div class="options">
+            <label><input type="radio" name="cocktail" value="5">5 아주 좋음</label>
+            <label><input type="radio" name="cocktail" value="4">4 좋음</label>
+            <label><input type="radio" name="cocktail" value="3">3 보통</label>
+            <label><input type="radio" name="cocktail" value="2">2 별로</label>
+            <label><input type="radio" name="cocktail" value="1">1 나쁨</label>
+            <label><input type="radio" name="cocktail" value="안 마심">안 마셨어요</label>
+          </div>
+        </div>
+
+        <div class="q" data-required="mood">
+          <p class="q-title">5. 가장 최근 방문 때 바 분위기(조명·음악·좌석)는 어땠나요?</p>
+          <div class="options">
+            <label><input type="radio" name="mood" value="5">5 아주 좋음</label>
+            <label><input type="radio" name="mood" value="4">4 좋음</label>
+            <label><input type="radio" name="mood" value="3">3 보통</label>
+            <label><input type="radio" name="mood" value="2">2 별로</label>
+            <label><input type="radio" name="mood" value="1">1 나쁨</label>
+          </div>
+        </div>
+
+      </fieldset>
+
+      <fieldset class="step" data-name="다음 방문" hidden>
+        <legend class="sr-only">다음 방문</legend>
+        <div class="q" data-required="revisit">
+          <p class="q-title">6. 한 달 안에 다시 오실 것 같나요?</p>
+          <div class="options column">
+            <label><input type="radio" name="revisit" value="꼭 올게요">꼭 올게요</label>
+            <label><input type="radio" name="revisit" value="아마 올 것">아마 올 것 같아요</label>
+            <label><input type="radio" name="revisit" value="모르겠음">잘 모르겠어요</label>
+            <label><input type="radio" name="revisit" value="안 올 것">안 올 것 같아요</label>
+          </div>
+        </div>
+
+        <div class="q" data-required="improve">
+          <p class="q-title">7. 더 자주 오려면 무엇이 바뀌면 좋을까요?</p>
+          <div class="options column">
+            <label><input type="radio" name="improve" value="메뉴">술·칵테일 메뉴</label>
+            <label><input type="radio" name="improve" value="가격">가격</label>
+            <label><input type="radio" name="improve" value="분위기">분위기(음악·조명·좌석)</label>
+            <label><input type="radio" name="improve" value="단골 혜택">이벤트·단골 혜택</label>
+            <label><input type="radio" name="improve" value="응대">직원·사장의 응대</label>
+            <label><input type="radio" name="improve" value="없음">지금도 좋아요</label>
+          </div>
+          <label class="comment" for="comment">하고 싶은 말 (선택)</label>
+          <textarea id="comment" name="comment" rows="3" maxlength="300" placeholder="이름이나 전화번호는 적지 마세요."></textarea>
+        </div>
+
+        <div class="q" data-required="adult">
+          <label class="check"><input type="checkbox" name="adult" value="확인">만 19세 이상입니다. (필수)</label>
+        </div>
+
+      </fieldset>
+
+      <input class="trap" type="text" name="website" tabindex="-1" autocomplete="off" aria-hidden="true">
+      <p class="error" id="form-error" role="alert"></p>
+      <div class="nav">
+        <button type="button" class="ghost" id="prev">이전</button>
+        <button type="button" class="cta" id="next">다음</button>
+        <button type="submit" class="cta" id="submit">익명으로 보내기</button>
+      </div>
+    </form>
+
+    <div class="done" id="done" hidden>
+      <h2 id="done-title" tabindex="-1"></h2>
+      <p id="done-copy"></p>
+    </div>
+
+    <details class="privacy">
+      <summary>개인정보 안내</summary>
+      <dl>
+        <dt>수집하지 않는 것</dt><dd>이름, 연락처, 방문·클릭 기록</dd>
+        <dt>저장하는 것</dt><dd>선택한 답변, 직접 쓴 글(선택), 제출 날짜</dd>
+        <dt>이용 목적과 공개</dt><dd>매장 개선을 위해 사장만 합계를 확인합니다. 다른 손님에게 공개하지 않습니다.</dd>
+        <dt>저장 위치와 기간</dt><dd>Google LLC(국외)의 Google 스프레드시트에 저장하며 2027년 3월 20일까지 보관 후 파기합니다.</dd>
+        <dt>운영자·문의</dt><dd>박슬기 · <a href="mailto:lukebayesian@gmail.com">lukebayesian@gmail.com</a></dd>
+      </dl>
+    </details>
+  </main>
+
+  <footer></footer>
+
+  <script src="config.js?v=1"></script>
+  <script src="survey.js?v=3"></script>
+</body>
+</html>
