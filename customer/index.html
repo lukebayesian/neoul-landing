@@ -9,7 +9,7 @@
   <meta name="theme-color" content="#0c141c">
   <link rel="icon" href="../logo.svg" type="image/svg+xml">
   <link rel="stylesheet" href="../styles.css?v=8">
-  <link rel="stylesheet" href="customer.css?v=3">
+  <link rel="stylesheet" href="customer.css?v=5">
 </head>
 <body>
   <header class="top">
@@ -25,6 +25,12 @@
       <h1 class="headline">이렇게 추운 날씨,<br><em>맛있는 술한잔</em><br>어떠세요?</h1>
       <h2>지난번 너울은 어떠셨나요?</h2>
       <p class="lead">너울에 오셨던 분께 여쭙니다. 가장 최근 방문을 떠올려 답해 주세요. 7문항, 약 1분이며 이름과 연락처는 받지 않습니다. 좋지 않았던 점도 그대로 알려주세요.</p>
+      <div class="gift" id="gift">
+        <p>설문을 완료하신 분께 <strong>낙화 1잔 무료 쿠폰</strong>을 드립니다.</p>
+        <p class="gift-period">행사 기간 2026년 11월 27일 ~ 12월 31일</p>
+        <p class="gift-terms">매일 선착순 5명 · 발급일로부터 15일 안에 사용 · 만 19세 이상 · 1인 1회</p>
+      </div>
+      <button type="button" class="ghost saved-coupon" id="show-coupon" hidden>받은 쿠폰 다시 보기</button>
     </section>
 
     <p class="step-label" id="step-label" aria-live="polite" tabindex="-1"></p>
@@ -139,13 +145,21 @@
     <div class="done" id="done" hidden>
       <h2 id="done-title" tabindex="-1"></h2>
       <p id="done-copy"></p>
+      <div class="coupon" id="coupon" hidden>
+        <p>아래 쿠폰을 직원에게 보여 주세요.</p>
+        <p class="coupon-name">낙화 1잔 무료</p>
+        <p class="coupon-code" id="coupon-code"></p>
+        <p id="coupon-expires"></p>
+        <p class="gift-terms">화면을 캡처해 두세요. 매장에서 신분증으로 만 19세 이상을 확인하며, 한 번만 사용할 수 있습니다.</p>
+      </div>
+      <p class="coupon-none" id="coupon-none" hidden></p>
     </div>
 
     <details class="privacy">
       <summary>개인정보 안내</summary>
       <dl>
         <dt>수집하지 않는 것</dt><dd>이름, 연락처, 방문·클릭 기록</dd>
-        <dt>저장하는 것</dt><dd>선택한 답변, 직접 쓴 글(선택), 제출 날짜</dd>
+        <dt>저장하는 것</dt><dd>선택한 답변, 직접 쓴 글(선택), 제출 날짜. 쿠폰 번호·발급일·만료일·사용 여부는 답변과 다른 탭에 저장합니다. 받은 쿠폰은 다시 볼 수 있도록 이 휴대폰의 브라우저에도 저장합니다.</dd>
         <dt>이용 목적과 공개</dt><dd>매장 개선을 위해 사장만 합계를 확인합니다. 다른 손님에게 공개하지 않습니다.</dd>
         <dt>저장 위치와 기간</dt><dd>Google LLC(국외)의 Google 스프레드시트에 저장하며 2027년 3월 20일까지 보관 후 파기합니다.</dd>
         <dt>운영자·문의</dt><dd>박슬기 · <a href="mailto:lukebayesian@gmail.com">lukebayesian@gmail.com</a></dd>
@@ -156,6 +170,6 @@
   <footer></footer>
 
   <script src="config.js?v=1"></script>
-  <script src="survey.js?v=3"></script>
+  <script src="survey.js?v=5"></script>
 </body>
 </html>
